@@ -1,0 +1,8 @@
+{
+    "Port": 8080,
+    "Loglevel": 3,
+    "Connection": {
+        "Driver": "sqlite3",
+        "Connection": "./coinslot.db"
+    }
+} 

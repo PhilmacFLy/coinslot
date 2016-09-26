@@ -7,6 +7,7 @@ import (
 
 	"github.com/chaosvermittlung/coinslot/global"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sqlx.DB
@@ -108,7 +109,7 @@ func (u *User) GetDetailstoUsername() error {
 }
 
 func (u *User) GetDetails() error {
-	err := db.Get(u, "SELECT * from Users Where ID = ? Limit 1", u.User_ID)
+	err := db.Get(u, "SELECT * from Users Where User_ID = ? Limit 1", u.User_ID)
 	return err
 }
 
@@ -168,6 +169,12 @@ type Project struct {
 	Description string
 }
 
+func GetAllProjects() ([]Project, error) {
+	var p []Project
+	err := db.Select(&p, "Select * from Projects")
+	return p, err
+}
+
 func (p *Project) Insert() error {
 	res, err := db.Exec("INSERT INTO Projects (name, goal, initiator, description) VALUES(?,?,?,?)", p.Name, p.Goal, p.Initiator, p.Description)
 	if err != nil {
@@ -189,6 +196,12 @@ func (p *Project) GetDetails() error {
 	return err
 }
 
+func (p *Project) GetInitiatorName() (string, error) {
+	var n string
+	err := db.Get(&n, "Select Username From Users Where User_ID = ?", p.Initiator)
+	return n, err
+}
+
 func (p *Project) GetFundings() ([]Funding, error) {
 	var f []Funding
 	err := db.Select(&f, "Select * from fundings Where project_id = ?", p.Project_ID)
@@ -198,11 +211,25 @@ func (p *Project) GetFundings() ([]Funding, error) {
 type Funding struct {
 	Project_ID int
 	User_ID    int
-	Funding    float64
+	Amount     float64
 	Confirmed  bool
 }
 
 func (f *Funding) Insert() error {
-	_, err := db.Exec("INSERT INTO Fundings (Project_ID ,User_ID, Funding, Confirmed) VALUES(?,?,?,?)", f.Project_ID, f.User_ID, f.Funding, f.Confirmed)
+	_, err := db.Exec("INSERT INTO Fundings (Project_ID ,User_ID, Amount, Confirmed) VALUES(?,?,?,?)", f.Project_ID, f.User_ID, f.Amount, f.Confirmed)
 	return err
+}
+
+func GetFundingAmounts(ff []Funding) (float64, float64) {
+	var pro float64
+	var got float64
+	for _, f := range ff {
+		if !f.Confirmed {
+			pro = pro + f.Amount
+		} else {
+			got = got + f.Amount
+		}
+	}
+
+	return pro, got
 }

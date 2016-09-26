@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Coinslot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="static/bootstrap-3.3.7-dist/css/bootstrap.css"/>
+  <link rel="stylesheet" type="text/css" href="static/bootstrap-3.3.7-dist/css/bootstrap-theme.css"/>
+  <script type="text/javascript" src="static/jquery/jquery-3.1.1.slim.min.js"></script>
+  <script type="text/javascript" src="static/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="page-header">
+    	<img src="static/logo-v1.0.png" class="logo img-rounded" width="64" height="64"><h1>Coinslot</h1>
+  	</div>
+	<nav class="navbar navbar-default">
+    	<!-- Brand and toggle get grouped for better mobile display -->
+    	<div class="navbar-header">
+      		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        		<span class="sr-only">Toggle navigation</span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+      		</button>
+      		<a class="navbar-brand" href="/">Coinslot</a>
+    	</div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+      <ul class="nav navbar-nav navbar-right">
+		<p class="navbar-text">Signed in as {{.Username}}</p>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/account">Account</a></li>
+			<li class="divider"></li>
+            <li><a href="/logoff">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
+	{{.Message}}
+	{{range $index, $element := .Projects}}
+	<div class="col-md-4">	
+		<div class="panel panel-primary">
+			<!-- Default panel contents -->
+			<div class="panel-heading">
+				<form action="list" class="form-inline">
+					<div class="form-group">
+						{{$element.Name}}
+						<button style="margin-left:10px" class="btn btn-danger" type="submit" name="action" value="remove">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+					</div>
+					<input type="hidden" name="list" value={{$element.Name}} />
+				</form>
+			</div>
+			<h4>Description</h4>
+			<p>{{$element.Description}}</p>
+			<h4>Funding</h4>
+			<p>Total Amount: {{$element.Goal}}, Confirmed Amount: {{$element.Confirmed}}, Promised Amount: {{$element.Promised}}
+			<div class="progress">
+			  <div class="progress-bar progress-bar-success" style="width: {{$element.ConfirmedP}}%">
+			    <span class="sr-only">{{$element.ConfirmedP}}% Funding Confirmed</span>
+			  </div>
+			  <div class="progress-bar progress-bar-warning" style="width: {{$element.PromisedP}}%">
+			    <span class="sr-only">{{$element.PromisedP}}% Funding Promised</span>
+			  </div>
+			</div>
+			{{if $element.UserIsAdmin}}
+			<table class="table">
+    				<tr>
+    					<th>Name</th>
+    					<th>Amount</th>
+						<th>Confirmed</th>
+						<th>Confirm</th>
+					</tr>
+					{{range $index2, $item := $element.Fundings}}
+					<tr>
+						<td>{{$item.Funder}}</td>
+						<td>{{$item.Amount}}€</td>
+						<td>{{if $item.Confirmed}} <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{else}} <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{end}}</td>
+						
+						<form action="list" class="form">
+							{{if $item.Confirmed}}
+							<td><button class="btn btn-success" type="submit" name="action" value="add" disabled><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>
+							{{else}}
+							<td><button class="btn btn-success" type="submit" name="action" value="remove"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>
+							{{end}}
+							<input type="hidden" name="list" value={{$item.Funder}} />
+						</form>
+						
+					</tr>
+					{{end}}
+
+  				</table>
+			{{end}} 
+		</div>
+	</div>
+	{{end}}
+</div>
+</body>
