@@ -10,13 +10,13 @@ import (
 	"github.com/chaosvermittlung/coinslot/global"
 )
 
-type Frontpage struct {
-	Projects []Project
+type frontpage struct {
+	Projects []project
 	Message  template.HTML
 	Username string
 }
 
-type Project struct {
+type project struct {
 	Name        string
 	Goal        float64
 	Promised    float64
@@ -26,10 +26,10 @@ type Project struct {
 	Initiator   string
 	Description string
 	UserIsAdmin bool
-	Fundings    []Funding
+	Fundings    []funding
 }
 
-type Funding struct {
+type funding struct {
 	Funder    string
 	Amount    float64
 	Confirmed bool
@@ -55,7 +55,7 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}*/
 
-	fp := Frontpage{}
+	fp := frontpage{}
 
 	pp, err := db100.GetAllProjects()
 
@@ -64,10 +64,10 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	var pro []Project
+	var pro []project
 
 	for _, op := range pp {
-		var p Project
+		var p project
 		p.Name = op.Name
 		p.Description = op.Description
 		p.Goal = op.Goal
@@ -93,7 +93,7 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 		if p.UserIsAdmin {
 			for _, of := range ff {
 				if of.Project_ID == op.Project_ID {
-					var f Funding
+					var f funding
 					f.Amount = of.Amount
 					var u db100.User
 					u.User_ID = of.User_ID

@@ -75,7 +75,7 @@
     					<th>Name</th>
     					<th>Amount</th>
 						<th>Confirmed</th>
-						<th>Confirm</th>
+						<th>Action</th>
 					</tr>
 					{{range $index2, $item := $element.Fundings}}
 					<tr>
@@ -87,8 +87,9 @@
 							{{if $item.Confirmed}}
 							<td><button class="btn btn-success" type="submit" name="action" value="add" disabled><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>
 							{{else}}
-							<td><button class="btn btn-success" type="submit" name="action" value="remove"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>
+							<td><button class="btn btn-success" type="submit" name="action" value=""><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>
 							{{end}}
+							<td><button class="btn btn-error" type="submit" name="action" value="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
 							<input type="hidden" name="list" value={{$item.Funder}} />
 						</form>
 						
