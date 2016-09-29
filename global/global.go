@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -31,10 +32,10 @@ func BuildMessage(template string, message string) string {
 	return strings.Replace(template, "$MESSAGE$", message, -1)
 }
 
-func SetCookie(w http.ResponseWriter, u string) error {
+func SetCookie(w http.ResponseWriter, id int) error {
 
 	value := map[string]string{
-		"name": u,
+		"ID": strconv.Itoa(id),
 	}
 
 	encoded, err := sc.Encode("coinslot", value)
@@ -54,20 +55,20 @@ func SetCookie(w http.ResponseWriter, u string) error {
 	return nil
 }
 
-func GetCookie(r *http.Request) (string, error) {
+func GetCookie(r *http.Request) (int, error) {
 	cookie, err := r.Cookie("coinslot")
 
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	value := make(map[string]string)
 	err = sc.Decode("coinslot", cookie.Value, &value)
 
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	return value["name"], nil
-
+	id, err := strconv.Atoi(value["name"])
+	return id, err
 }
 
 func RemoveCookie(w http.ResponseWriter, r *http.Request) {

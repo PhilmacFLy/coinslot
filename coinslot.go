@@ -46,7 +46,6 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 	var fronterr string
 
 	u := db100.User{}
-	u.Username = "PhilmacFLy"
 	u.User_ID = 1
 
 	/*u.Username, err = GetCookie(r)
@@ -55,6 +54,13 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}*/
 
+	err := u.GetDetails()
+	if err != nil {
+		fronterr = global.BuildMessage(errormessage, err.Error())
+		log.Println(err)
+		return
+	}
+
 	fp := frontpage{}
 
 	pp, err := db100.GetAllProjects()
@@ -62,6 +68,7 @@ func mainhandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fronterr = global.BuildMessage(errormessage, err.Error())
 		log.Println(err)
+		return
 	}
 
 	var pro []project
